@@ -10,5 +10,5 @@ int main()
     Bird firstBird = Bird(5, 5, 5, bird1);
     std::cout << std::fixed << std::setprecision(2) << firstBird.getBirdX() << '\n';  
     std::cout << std::fixed << std::setprecision(2) << firstBird.getBirdY() << '\n';  
-    
+    std::cout << std::fixed << std::setprecision(2) << firstBird.getBirdZ() << '\n';  
 }
