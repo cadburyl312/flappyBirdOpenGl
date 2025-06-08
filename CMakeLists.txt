@@ -17,5 +17,7 @@ add_executable(my_app
 )
 
 target_link_libraries(my_app PRIVATE "libfreeglut.dll"
+                                      "glew32.dll"
                                       "opengl32.dll"
+                                      
 )
