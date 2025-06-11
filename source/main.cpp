@@ -4,9 +4,17 @@
 #include "bird.h"
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <chrono>
+
 
 void display();
 void ResizeFunction(int width, int height);
+void initWindow(int argc, char** argv);
+
+unsigned FrameCount = 0;
+
+static auto last = std::chrono::high_resolution_clock::now();
+
 
 int main(int argc, char** argv)
 {
@@ -19,6 +27,53 @@ int main(int argc, char** argv)
               << firstBird.getBirdY() << '\n'
               << firstBird.getBirdZ() << '\n';
 
+    initWindow(argc, argv);
+
+    GLenum glew = glewInit();
+
+    if (GLEW_OK != glew) {
+        fprintf(
+        stderr,
+        "ERROR: %s\n",
+        glewGetErrorString(glew)
+        );
+        exit(EXIT_FAILURE);
+    }
+
+    fprintf(
+        stdout,
+        "INFO: OpenGL Version: %s\n",
+        glGetString(GL_VERSION)
+    );
+    glutMainLoop();
+
+    return 0;
+}
+
+void display() {
+
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glFlush();
+     auto now = std::chrono::high_resolution_clock::now();
+     auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - last).count();
+     if (elapsed >= 1000) {
+        double fps = FrameCount * 1000.0 / elapsed;
+                std::cout << std::fixed << std::setprecision(2)
+                  << "fps is " << fps << '\n';
+
+        FrameCount = 0;
+        last = now;
+     }
+     FrameCount ++;
+}
+
+void ResizeFunction(int Width, int Height)
+{
+  glViewport(0, 0, Width, Height);
+}
+
+void initWindow(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitContextVersion(4, 0);
 
@@ -35,23 +90,4 @@ int main(int argc, char** argv)
 
     glutReshapeFunc(ResizeFunction);
     glutDisplayFunc(display);
-    fprintf(
-        stdout,
-        "INFO: OpenGL Version: %s\n",
-        glGetString(GL_VERSION)
-    );
-
-    glutMainLoop();
-    return 0;
-}
-
-void display() {
-    // Clear the color buffer to the color set by glClearColor
-    glClear(GL_COLOR_BUFFER_BIT);
-    glFlush();
-}
-
-void ResizeFunction(int Width, int Height)
-{
-  glViewport(0, 0, Width, Height);
 }
