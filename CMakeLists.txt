@@ -13,6 +13,8 @@ include_directories(${CMAKE_SOURCE_DIR}/includes)
 add_executable(my_app
     source/main.cpp
     source/bird.cpp
+    source/Model.cpp
+    source/Control.cpp
 )
 
 # macOS: Link against the OpenGL framework explicitly

@@ -2,6 +2,8 @@
 #include <iomanip>
 #include <format>
 #include "bird.h"
+#include "Model.h"
+#include "Control.h"
 #include <chrono>
 
 #include "SDL2/SDL.h"
@@ -11,11 +13,16 @@
 
 void SDL_config();
 void init(SDL_Window*& window);
+void tearDown(SDL_Window*& window);
 
 
 
 int main(int argc, char** argv)
-{
+{    
+    const double timeStep = 10;
+    double frameTime = 0.0;
+    double lastTime = SDL_GetTicks();
+    double currentTime;
     const char* bird1 = "first Bird";
     std::cout << "Hello World!\n";
 
@@ -28,15 +35,28 @@ int main(int argc, char** argv)
     SDL_Window* main_window;
     init(main_window);
     SDL_config();
-
+    
+    Model model;
+    Control control = Control(model);
     SDL_Event Event;
+    
     while (true) {
-        glClearColor(0, 0, 1, 1);
+        currentTime = SDL_GetTicks();
+        frameTime += currentTime - lastTime;
+        lastTime = currentTime;
+
+        control.handleInput();
+
+        glClearColor(model.background_color[0], model.background_color[1], model.background_color[2], model.background_color[3]);
         glClear(GL_COLOR_BUFFER_BIT);
         glFlush();
+        while (frameTime>timeStep) {
+            frameTime -= timeStep;
+        }
         while (SDL_PollEvent(&Event)){}
         SDL_GL_SwapWindow(main_window);
     }
+    tearDown(main_window);
     return 0;
 }
 
@@ -65,5 +85,10 @@ void init(SDL_Window*& window) {
 
     auto glewExperimental = GL_TRUE;
     glewInit();
+}
 
+void tearDown(SDL_Window*& window) {
+    SDL_GL_DeleteContext(window);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
 }
