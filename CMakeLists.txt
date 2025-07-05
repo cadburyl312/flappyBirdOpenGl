@@ -14,3 +14,22 @@ add_executable(my_app
     source/main.cpp
     source/bird.cpp
 )
+
+# macOS: Link against the OpenGL framework explicitly
+if (APPLE)
+    # GLEW
+    include_directories(/opt/homebrew/Cellar/glew/2.2.0_1/include)
+    link_directories("/opt/homebrew/Cellar/glew/2.2.0_1/lib")
+    # SDL2
+    include_directories(/opt/homebrew/Cellar/sdl2/2.32.8/include)
+    link_directories("/opt/homebrew/Cellar/sdl2/2.32.8/lib")
+
+    target_link_libraries(my_app
+        "-framework OpenGL"
+        "-framework Cocoa"
+        "-framework IOKit"
+        "-framework CoreVideo"
+        /opt/homebrew/Cellar/sdl2/2.32.8/lib/libSDL2.dylib
+        /opt/homebrew/Cellar/glew/2.2.0_1/lib/libGLEW.dylib
+    )
+endif()
