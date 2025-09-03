@@ -10,15 +10,40 @@
 #include "GL/glew.h"
 
 #include <OpenGL/gl.h>
+#include <array>
+#include <iostream>
+#include <asio.hpp>
 
 void SDL_config();
 void init(SDL_Window*& window);
 void tearDown(SDL_Window*& window);
 
+using asio::ip::tcp;
 
 
 int main(int argc, char** argv)
 {    
+    asio::io_context io_context;
+    tcp::resolver resolver(io_context);
+
+    tcp::resolver::results_type endpoints =resolver.resolve("127.0.0.1", "5001");
+
+    tcp::socket socket(io_context);
+    asio::connect(socket, endpoints);
+
+    std::array<char, 128> buf;
+    std::error_code error;
+
+     asio::steady_timer t(io_context, asio::chrono::seconds(2));
+    t.wait();
+
+    size_t len = socket.read_some(asio::buffer(buf), error);
+
+    socket.non_blocking(true);
+
+    std::cout.write(buf.data(), len);
+
+
     const double timeStep = 10;
     double frameTime = 0.0;
     double lastTime = SDL_GetTicks();
@@ -37,10 +62,14 @@ int main(int argc, char** argv)
     SDL_config();
     
     Model model;
-    Control control = Control(model);
+    Control control = Control(model, &socket);
     SDL_Event Event;
-    
+    size_t len;
     while (true) {
+        len = socket.read_some(asio::buffer(buf), error);
+        if (len > 0) {
+            std::cout.write(buf.data(), len);
+        }
         currentTime = SDL_GetTicks();
         frameTime += currentTime - lastTime;
         lastTime = currentTime;

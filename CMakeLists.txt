@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Include the 'includes' directory for header files
 include_directories(${CMAKE_SOURCE_DIR}/includes)
+include_directories(/opt/homebrew/include)
 
 # Add source files
 add_executable(my_app
@@ -18,6 +19,8 @@ add_executable(my_app
 )
 
 # macOS: Link against the OpenGL framework explicitly
+
+
 if (APPLE)
     # GLEW
     include_directories(/opt/homebrew/Cellar/glew/2.2.0_1/include)
@@ -33,5 +36,6 @@ if (APPLE)
         "-framework CoreVideo"
         /opt/homebrew/Cellar/sdl2/2.32.8/lib/libSDL2.dylib
         /opt/homebrew/Cellar/glew/2.2.0_1/lib/libGLEW.dylib
+        pthread
     )
 endif()
