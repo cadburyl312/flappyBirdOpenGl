@@ -112,4 +112,7 @@ void CheckLinkStatus(GLuint& shader_program) {
         char buffer[512];
         glGetProgramInfoLog(shader_program, 512, nullptr, buffer);
     }
+
+
+    //TODO, MODIFY CODE TO MOVE TRIANGLE LOADING INTO SEPERATE FUNCTION VALLED WITHIN VIEW.
 }
