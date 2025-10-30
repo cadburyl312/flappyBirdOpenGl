@@ -16,6 +16,7 @@ add_executable(my_app
     source/bird.cpp
     source/Model.cpp
     source/Control.cpp
+    source/View.cpp
 )
 
 # macOS: Link against the OpenGL framework explicitly

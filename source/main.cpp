@@ -13,6 +13,7 @@
 #include <array>
 #include <iostream>
 #include <asio.hpp>
+#include "View.h"
 
 void SDL_config();
 void init(SDL_Window*& window);
@@ -63,8 +64,10 @@ int main(int argc, char** argv)
     
     Model model;
     Control control = Control(model, &socket);
+
+    View view = View(model);
     SDL_Event Event;
-    size_t len;
+    //size_t len;
     while (true) {
         len = socket.read_some(asio::buffer(buf), error);
         if (len > 0) {
@@ -78,6 +81,9 @@ int main(int argc, char** argv)
 
         glClearColor(model.background_color[0], model.background_color[1], model.background_color[2], model.background_color[3]);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
         glFlush();
         while (frameTime>timeStep) {
             frameTime -= timeStep;
@@ -105,7 +111,17 @@ void SDL_config()
 void init(SDL_Window*& window) {
     SDL_Init(SDL_INIT_EVERYTHING);
 
-    window = SDL_CreateWindow("bird game", 20, 40, 600,600,SDL_WINDOW_OPENGL);
+
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+
+
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
+
+    window = SDL_CreateWindow("game", 20, 40, 600,600,SDL_WINDOW_OPENGL);
     if (window == NULL) {
         std::cout << "Failed to create game windows";
     }
