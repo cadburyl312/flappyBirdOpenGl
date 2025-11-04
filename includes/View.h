@@ -22,6 +22,7 @@ private:
 public:
     View(Model& model);
     void render(SDL_Window* window);
+    void TriangleShader();
 };
  
  

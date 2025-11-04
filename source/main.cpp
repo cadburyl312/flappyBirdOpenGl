@@ -4,7 +4,9 @@
 #include "bird.h"
 #include "Model.h"
 #include "Control.h"
+#include "GameObject.h"
 #include <chrono>
+
 
 #include "SDL2/SDL.h"
 #include "GL/glew.h"
@@ -40,6 +42,24 @@ int main(int argc, char** argv)
 
     size_t len = socket.read_some(asio::buffer(buf), error);
 
+    const std::string prefix = "Your client unique ID is:";
+
+    int clientId = 0;
+    std::string msg(buf.data());
+
+    if (msg.rfind(prefix, 0) == 0) {
+        std::cout << "Message starts correctly, grabbing client Id\n";
+        clientId = stoi(msg.substr(prefix.size()));
+        std::cout <<  clientId;
+
+    }
+
+
+
+    GameObject player = GameObject();
+    player.setObjectType("Player");
+
+
     socket.non_blocking(true);
 
     std::cout.write(buf.data(), len);
@@ -49,14 +69,6 @@ int main(int argc, char** argv)
     double frameTime = 0.0;
     double lastTime = SDL_GetTicks();
     double currentTime;
-    const char* bird1 = "first Bird";
-    std::cout << "Hello World!\n";
-
-    Bird firstBird(5, 5, 5, bird1);
-    std::cout << std::fixed << std::setprecision(2)
-              << firstBird.getBirdX() << '\n'
-              << firstBird.getBirdY() << '\n'
-              << firstBird.getBirdZ() << '\n';
 
     SDL_Window* main_window;
     init(main_window);
@@ -66,6 +78,7 @@ int main(int argc, char** argv)
     Control control = Control(model, &socket);
 
     View view = View(model);
+    view.TriangleShader();
     SDL_Event Event;
     //size_t len;
     while (true) {
@@ -77,19 +90,24 @@ int main(int argc, char** argv)
         frameTime += currentTime - lastTime;
         lastTime = currentTime;
 
-        control.handleInput();
+        
 
         glClearColor(model.background_color[0], model.background_color[1], model.background_color[2], model.background_color[3]);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
         glFlush();
         while (frameTime>timeStep) {
             frameTime -= timeStep;
         }
+
+        control.handleInput();
+
         while (SDL_PollEvent(&Event)){}
         SDL_GL_SwapWindow(main_window);
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
     tearDown(main_window);
     return 0;
@@ -136,4 +154,9 @@ void tearDown(SDL_Window*& window) {
     SDL_GL_DeleteContext(window);
     SDL_DestroyWindow(window);
     SDL_Quit();
+}
+
+void updatePlayerPosition(asio::ip::tcp::socket* socket, GameObject player, int clientId) {
+    std::string playerPositionUpdate = std::string str = std::to_string(player.getX()) + ":" + std::to_string(player.getX()) + ":" + std::to_string(player.getY()) + ":" + std::to_string(player.getZ());
+    //TODO send above message to the server
 }

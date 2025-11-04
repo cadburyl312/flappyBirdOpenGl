@@ -17,6 +17,7 @@ add_executable(my_app
     source/Model.cpp
     source/Control.cpp
     source/View.cpp
+    source/GameObject.cpp
 )
 
 # macOS: Link against the OpenGL framework explicitly

@@ -13,7 +13,7 @@ private:
     asio::ip::tcp::socket* socket; 
     const Uint8 *key_state;
 public:
-    void handleInput();
+    void handleInput(double frameTime, GameObject player);
     Control(Model& model, asio::ip::tcp::socket* socket);
 };
  
