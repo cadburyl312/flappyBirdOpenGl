@@ -16,15 +16,15 @@ void Control::handleInput(double frameTime, GameObject player) {
 
     if (key_state[SDL_SCANCODE_R]) { 
         model.background_color = std::vector<double>{ 1,0,0,1 };
-        asio::write(*socket, asio::buffer("i am sending the message R"));
+        //asio::write(*socket, asio::buffer("i am sending the message R"));
     }
     if (key_state[SDL_SCANCODE_G]) { 
         model.background_color = std::vector<double>{ 0,1,0,1 }; 
-        asio::write(*socket, asio::buffer("i am sending the message G"));
+        //asio::write(*socket, asio::buffer("i am sending the message G"));
     }
     if (key_state[SDL_SCANCODE_B]) { 
         model.background_color = std::vector<double>{ 0,0,1,1 };
-        asio::write(*socket, asio::buffer("i am sending the message B"));
+        //asio::write(*socket, asio::buffer("i am sending the message B"));
     }
 
     

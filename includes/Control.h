@@ -3,9 +3,11 @@
  
 #include "SDL2/SDL.h"
 #include "Model.h"
+#include "GameObject.h"
 #include <array>
 #include <iostream>
 #include <asio.hpp>
+
  
 class Control {
 private:

@@ -17,9 +17,13 @@
 #include <asio.hpp>
 #include "View.h"
 
+#include <thread>
+#include <chrono>
+
 void SDL_config();
 void init(SDL_Window*& window);
 void tearDown(SDL_Window*& window);
+void updatePlayerPosition(asio::ip::tcp::socket* socket, GameObject player, int clientId);
 
 using asio::ip::tcp;
 
@@ -102,12 +106,14 @@ int main(int argc, char** argv)
             frameTime -= timeStep;
         }
 
-        control.handleInput();
+        control.handleInput(frameTime, player);
 
         while (SDL_PollEvent(&Event)){}
         SDL_GL_SwapWindow(main_window);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        updatePlayerPosition(&socket, player, clientId);
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
     tearDown(main_window);
     return 0;
@@ -157,6 +163,6 @@ void tearDown(SDL_Window*& window) {
 }
 
 void updatePlayerPosition(asio::ip::tcp::socket* socket, GameObject player, int clientId) {
-    std::string playerPositionUpdate = std::string str = std::to_string(player.getX()) + ":" + std::to_string(player.getX()) + ":" + std::to_string(player.getY()) + ":" + std::to_string(player.getZ());
-    //TODO send above message to the server
+    std::string playerPositionUpdate = std::to_string(clientId) + ":" + std::to_string(player.getX()) + ":" + std::to_string(player.getX()) + ":" + std::to_string(player.getY()) + ":" + std::to_string(player.getZ());
+     asio::write(*socket, asio::buffer(playerPositionUpdate));
 }
